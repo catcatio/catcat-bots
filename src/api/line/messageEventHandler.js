@@ -1,6 +1,6 @@
 const languageDetector = require('../languageDector')
 
-const eventType = "message"
+const eventType = 'message'
 
 const handleEvent = async (event) => ({
   type: 'text',

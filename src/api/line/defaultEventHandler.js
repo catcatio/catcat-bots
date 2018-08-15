@@ -1,6 +1,6 @@
-const eventType = "*"
+const eventType = '*'
 
-const handleEvent = async (event) => null
+const handleEvent = async () => null
 
 module.exports = {
   eventType,
