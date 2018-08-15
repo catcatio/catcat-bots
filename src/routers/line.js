@@ -4,6 +4,7 @@ module.exports = (config) => {
   const router = require('express').Router()
 
   router.post('/webhook', middleware, (req, res) => {
+    console.log(req.body)
     Promise
       .all(req.body.events.map(eventHandler))
       .then((result) => res.json(result))
