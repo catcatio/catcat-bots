@@ -1,11 +1,15 @@
-const messageEventHandler = require('./messageEventHandler')
-const defaultEventHandler = require('./defaultEventHandler')
+module.exports = (lineClient, languageDetector) => {
+  const messageEventHandler = require('./messageEventHandler')(lineClient, languageDetector)
+  const followEventHandler = require('./followEventHandler')(lineClient)
+  const defaultEventHandler = require('./defaultEventHandler')
 
-const eventHandlers = {
-  [messageEventHandler.eventType]: messageEventHandler
-}
+  const eventHandlers = {
+    [messageEventHandler.eventType]: messageEventHandler,
+    [followEventHandler.eventType]: followEventHandler
+  }
 
-module.exports = (event) => {
-  const handler = eventHandlers[event.type] || defaultEventHandler
-  return handler.handleEvent(event)
+  return (event) => {
+    const handler = eventHandlers[event.type] || defaultEventHandler
+    return handler.handleEvent(event)
+  }
 }
