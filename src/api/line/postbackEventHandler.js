@@ -1,4 +1,5 @@
-const eventType = 'message'
+const eventType = 'postback'
+
 const dialogflow = require('dialogflow')
 const structjson = require('../dialogflow/structjson')
 
@@ -8,9 +9,9 @@ const sessionId = 'quickstart-session-id' // TODO sessionid management
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 const PLATFORM_LINE = 'LINE'
 
-module.exports = (lineClient, languageDetector) => {
+
+module.exports = (lineClient) => {
   const handleEvent = async (event) => {
-    console.log(`\t--> ${event.message.text}`)
     const sessionClient = new dialogflow.SessionsClient()
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
     const queryParamsPayload = {
@@ -21,8 +22,8 @@ module.exports = (lineClient, languageDetector) => {
       session: sessionPath,
       queryInput: {
         text: {
-          text: event.message.text,
-          languageCode: await languageDetector(event.message.text)
+          text: event.postback.data,
+          languageCode: 'en'
         },
       },
       queryParams: {
@@ -57,10 +58,8 @@ module.exports = (lineClient, languageDetector) => {
         }
       })
   }
-
   return {
     eventType,
     handleEvent
   }
 }
-// https://bots.dialogflow.com/line/1a581501-b2e6-43cb-98a9-9a64d1b39b80/webhook
