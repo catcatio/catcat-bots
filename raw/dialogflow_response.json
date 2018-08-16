@@ -1,0 +1,173 @@
+{
+    "fulfillmentMessages": [
+        {
+            "platform": "FACEBOOK",
+            "quickReplies": {
+                "quickReplies": [
+                    "Yes",
+                    "No",
+                    "Cancel"
+                ],
+                "title": "You want to join Stellar 101 is that right?"
+            },
+            "message": "quickReplies"
+        },
+        {
+            "platform": "PLATFORM_UNSPECIFIED",
+            "payload": {
+                "fields": {
+                    "line": {
+                        "structValue": {
+                            "fields": {
+                                "type": {
+                                    "stringValue": "text",
+                                    "kind": "stringValue"
+                                },
+                                "text": {
+                                    "stringValue": "You want to join Stellar 101,is that right?",
+                                    "kind": "stringValue"
+                                },
+                                "quickReply": {
+                                    "structValue": {
+                                        "fields": {
+                                            "items": {
+                                                "listValue": {
+                                                    "values": [
+                                                        {
+                                                            "structValue": {
+                                                                "fields": {
+                                                                    "action": {
+                                                                        "structValue": {
+                                                                            "fields": {
+                                                                                "type": {
+                                                                                    "stringValue": "message",
+                                                                                    "kind": "stringValue"
+                                                                                },
+                                                                                "text": {
+                                                                                    "stringValue": "Yes",
+                                                                                    "kind": "stringValue"
+                                                                                },
+                                                                                "label": {
+                                                                                    "stringValue": "Yes",
+                                                                                    "kind": "stringValue"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "kind": "structValue"
+                                                                    },
+                                                                    "type": {
+                                                                        "stringValue": "action",
+                                                                        "kind": "stringValue"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "kind": "structValue"
+                                                        },
+                                                        {
+                                                            "structValue": {
+                                                                "fields": {
+                                                                    "action": {
+                                                                        "structValue": {
+                                                                            "fields": {
+                                                                                "type": {
+                                                                                    "stringValue": "message",
+                                                                                    "kind": "stringValue"
+                                                                                },
+                                                                                "text": {
+                                                                                    "stringValue": "No",
+                                                                                    "kind": "stringValue"
+                                                                                },
+                                                                                "label": {
+                                                                                    "stringValue": "No",
+                                                                                    "kind": "stringValue"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "kind": "structValue"
+                                                                    },
+                                                                    "type": {
+                                                                        "stringValue": "action",
+                                                                        "kind": "stringValue"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "kind": "structValue"
+                                                        }
+                                                    ]
+                                                },
+                                                "kind": "listValue"
+                                            }
+                                        }
+                                    },
+                                    "kind": "structValue"
+                                }
+                            }
+                        },
+                        "kind": "structValue"
+                    }
+                }
+            },
+            "message": "payload"
+        }
+    ],
+    "outputContexts": [
+        {
+            "name": "projects/catcatchatbot/agent/sessions/quickstart-session-id/contexts/eventsticketsbook-followup",
+            "lifespanCount": 1,
+            "parameters": {
+                "fields": {
+                    "event-title.original": {
+                        "stringValue": "Stellar 101",
+                        "kind": "stringValue"
+                    },
+                    "event-title": {
+                        "stringValue": "Stellar 101",
+                        "kind": "stringValue"
+                    }
+                }
+            }
+        }
+    ],
+    "queryText": "join Stellar 101",
+    "speechRecognitionConfidence": 0,
+    "action": "events.tickets.book",
+    "parameters": {
+        "fields": {
+            "event-title": {
+                "stringValue": "Stellar 101",
+                "kind": "stringValue"
+            }
+        }
+    },
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "",
+    "webhookSource": "",
+    "webhookPayload": null,
+    "intent": {
+        "inputContextNames": [],
+        "events": [],
+        "trainingPhrases": [],
+        "outputContexts": [],
+        "parameters": [],
+        "messages": [],
+        "defaultResponsePlatforms": [],
+        "followupIntentInfo": [],
+        "name": "projects/catcatchatbot/agent/intents/d01234bf-d2ad-4851-a20d-4925b4def084",
+        "displayName": "events.tickets.book",
+        "priority": 0,
+        "isFallback": false,
+        "mlEnabled": false,
+        "webhookState": "WEBHOOK_STATE_UNSPECIFIED",
+        "action": "",
+        "resetContexts": false,
+        "rootFollowupIntentName": "",
+        "parentFollowupIntentName": "",
+        "mlDisabled": false,
+        "endInteraction": false
+    },
+    "intentDetectionConfidence": 1,
+    "diagnosticInfo": null,
+    "languageCode": "en",
+    "sentimentAnalysisResult": null,
+    "knowledgeAnswers": null
+}
