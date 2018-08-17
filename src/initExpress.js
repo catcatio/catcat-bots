@@ -6,7 +6,7 @@ module.exports = ({ port }) => {
 
   app.use(cors)
   app.use(bodyParser.urlencoded({ extended: false }))
-  app.use(bodyParser.json())
+  // app.use(bodyParser.json())
   app.use(httpContext)
   app.use(require('./middleware/request-id'))
 
