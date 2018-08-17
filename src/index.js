@@ -1,7 +1,7 @@
 require('dotenv/config')
 
-const config = require('./src/config')
-const server = require('./src/server')
+const config = require('./config')
+const server = require('./server')
 
 console.log('config.isProduction: ', config.isProduction)
 

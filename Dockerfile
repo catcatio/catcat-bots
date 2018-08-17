@@ -1,15 +1,27 @@
-FROM alpine:edge
-ENV NODE_ENV develop
+FROM keymetrics/pm2:8-alpine
+
+ENV NODE_ENV production
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
-# If you have native dependencies, you'll need extra tools
-# RUN apk add --no-cache make gcc g++ python
 
-RUN apk --no-cache add git bash
-RUN apk add --update nodejs nodejs-npm && npm install -g npm
+# Show current folder structure in logs
 
-RUN mkdir -p /usr/app \
-    && npm i -g nodemon
+RUN mkdir -p /usr/app
 
 WORKDIR /usr/app
+
+# COPY src src/
+# COPY package.json .
+# COPY pm2.json .
+
+# Install app dependencies
+ENV NPM_CONFIG_LOGLEVEL warn
+RUN npm i -g nodemon \
+    && pm2 install pm2-logrotate \
+    && pm2 set pm2-logrotate:max_size 10M \
+    && pm2 set pm2-logrotate:compress true \
+    && pm2 set pm2-logrotate:rotateInterval '0 0 * * * *'
+
 VOLUME ["/usr/app"]
+
+CMD ["pm2-runtime", "start", "pm2.json"]
