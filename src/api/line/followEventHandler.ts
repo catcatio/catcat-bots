@@ -17,11 +17,11 @@ const welcomeTemplate = (message, ...options) => {
 
 const eventType = 'follow'
 
-const handleEvent = (lineClient) => async (event) => {
+const handler = (lineClient) => async (event) => {
   return lineClient.replyMessage(event.replyToken, welcomeTemplate('Hi there, how can I help you?', 'Show Events', 'Nothing'))
 }
 
-module.exports = (lineClient) => ({
+export default {
   eventType,
-  handleEvent: handleEvent(lineClient)
-})
+  handler
+}

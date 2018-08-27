@@ -1,4 +1,4 @@
-const randomString = (len = 5) => {
+export default (len = 5) => {
   var text = ''
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
@@ -8,5 +8,3 @@ const randomString = (len = 5) => {
 
   return text
 }
-
-module.exports = randomString

@@ -44,7 +44,7 @@ const JSON_SIMPLE_VALUE_KINDS = new Set([
 ])
 
 function jsonValueToProto(value) {
-  const valueProto = {}
+  const valueProto: any = {}
 
   if (value === null) {
     valueProto.kind = 'nullValue'
@@ -98,7 +98,7 @@ function valueProtoToJson(proto) {
   }
 }
 
-module.exports = {
+export default {
   jsonToStructProto,
   structProtoToJson,
 }

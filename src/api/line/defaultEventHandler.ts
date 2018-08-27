@@ -1,11 +1,11 @@
 const eventType = '*'
 
-const handleEvent = async (event) => {
+const handler = () => async (event) => {
   console.warn(JSON.stringify(event, null, 2))
   return null
 }
 
-module.exports = {
+export default {
   eventType,
-  handleEvent
+  handler
 }

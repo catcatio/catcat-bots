@@ -1,7 +1,7 @@
-const Translate = require('@google-cloud/translate')
+import * as Translate from '@google-cloud/translate';
 const translate = new Translate()
 
-module.exports = async (text) => {
+export default async (text) => {
   const defaultLanguage = 'en'
   const startTime = Date.now()
   try {

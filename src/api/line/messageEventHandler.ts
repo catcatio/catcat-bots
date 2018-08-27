@@ -1,7 +1,6 @@
-const eventType = 'postback'
-
-const dialogflow = require('dialogflow')
-const structjson = require('../dialogflow/structjson')
+const eventType = 'message'
+import dialogflow from 'dialogflow';
+import structjson from '../dialogflow/structjson'
 
 const projectId = 'catcatchatbot' //https://dialogflow.com/docs/agents#settings
 const sessionId = 'quickstart-session-id' // TODO sessionid management
@@ -9,9 +8,9 @@ const sessionId = 'quickstart-session-id' // TODO sessionid management
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 const PLATFORM_LINE = 'LINE'
 
-
-module.exports = (lineClient) => {
-  const handleEvent = async (event) => {
+const handler = (lineClient, languageDetector) => {
+  return async (event) => {
+    console.log(`\t--> ${event.message.text}`)
     const sessionClient = new dialogflow.SessionsClient()
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
     const queryParamsPayload = {
@@ -22,8 +21,8 @@ module.exports = (lineClient) => {
       session: sessionPath,
       queryInput: {
         text: {
-          text: event.postback.data,
-          languageCode: 'en'
+          text: event.message.text,
+          languageCode: await languageDetector(event.message.text)
         },
       },
       queryParams: {
@@ -48,7 +47,7 @@ module.exports = (lineClient) => {
           if (!replyMsg) { return }
 
           if (replyMsg.message === 'payload') {
-            const payload = structjson.structProtoToJson(replyMsg.payload)
+            const payload: any = structjson.structProtoToJson(replyMsg.payload)
             const linePayload = payload.line
             console.log(`\t<-- ${JSON.stringify(linePayload)}`)
             return linePayload && lineClient.replyMessage(event.replyToken, linePayload)
@@ -58,8 +57,9 @@ module.exports = (lineClient) => {
         }
       })
   }
-  return {
-    eventType,
-    handleEvent
-  }
+}
+
+export default {
+  handler,
+  eventType
 }

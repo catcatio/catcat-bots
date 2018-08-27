@@ -1,7 +1,9 @@
+import { Router } from 'express'
+import lineApi from '../api/line'
 
-module.exports = (config) => {
-  const { middleware, eventHandler } = require('../api/line')(config)
-  const router = require('express').Router()
+export default (config) => {
+  const { middleware, eventHandler } = lineApi(config)
+  const router = Router()
 
   router.post('/webhook', middleware, (req, res) => {
     Promise
@@ -9,6 +11,7 @@ module.exports = (config) => {
       .then((result) => res.json(result))
       .catch((err) => {
         console.error(err.message)
+        console.error(err.stack)
         res.status(500).end()
       })
   })

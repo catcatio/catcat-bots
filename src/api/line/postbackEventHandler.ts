@@ -1,6 +1,7 @@
-const eventType = 'message'
-const dialogflow = require('dialogflow')
-const structjson = require('../dialogflow/structjson')
+const eventType = 'postback'
+
+import dialogflow from 'dialogflow';
+import structjson from '../dialogflow/structjson';
 
 const projectId = 'catcatchatbot' //https://dialogflow.com/docs/agents#settings
 const sessionId = 'quickstart-session-id' // TODO sessionid management
@@ -8,9 +9,8 @@ const sessionId = 'quickstart-session-id' // TODO sessionid management
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 const PLATFORM_LINE = 'LINE'
 
-module.exports = (lineClient, languageDetector) => {
-  const handleEvent = async (event) => {
-    console.log(`\t--> ${event.message.text}`)
+const handler = (lineClient) => {
+  return async (event) => {
     const sessionClient = new dialogflow.SessionsClient()
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
     const queryParamsPayload = {
@@ -21,8 +21,8 @@ module.exports = (lineClient, languageDetector) => {
       session: sessionPath,
       queryInput: {
         text: {
-          text: event.message.text,
-          languageCode: await languageDetector(event.message.text)
+          text: event.postback.data,
+          languageCode: 'en'
         },
       },
       queryParams: {
@@ -47,7 +47,7 @@ module.exports = (lineClient, languageDetector) => {
           if (!replyMsg) { return }
 
           if (replyMsg.message === 'payload') {
-            const payload = structjson.structProtoToJson(replyMsg.payload)
+            const payload: any = structjson.structProtoToJson(replyMsg.payload)
             const linePayload = payload.line
             console.log(`\t<-- ${JSON.stringify(linePayload)}`)
             return linePayload && lineClient.replyMessage(event.replyToken, linePayload)
@@ -57,10 +57,9 @@ module.exports = (lineClient, languageDetector) => {
         }
       })
   }
-
-  return {
-    eventType,
-    handleEvent
-  }
 }
-// https://bots.dialogflow.com/line/1a581501-b2e6-43cb-98a9-9a64d1b39b80/webhook
+
+export default {
+  handler,
+  eventType
+}

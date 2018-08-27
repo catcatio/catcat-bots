@@ -1,12 +1,14 @@
 require('dotenv/config')
+require('@rabbotio/noconsole')
 
-const config = require('./config')
-const server = require('./server')
+import config from './config';
+import server from './server';
 
 console.log('config.isProduction: ', config.isProduction)
 
 server(config).start()
   .catch(err => {
     console.error(err)
+    console.error(err.stack)
     process.exit(1)
   })
