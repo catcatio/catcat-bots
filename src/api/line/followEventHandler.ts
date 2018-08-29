@@ -17,8 +17,22 @@ const welcomeTemplate = (message, ...options) => {
 
 const eventType = 'follow'
 
+const tryGetErrorMessage = (err) => {
+  try {
+    return err.originalError.response.data.message
+  } catch (err) {
+    return ''
+  }
+}
 const handler = (lineClient) => async (event) => {
-  return lineClient.replyMessage(event.replyToken, welcomeTemplate('Hi there! We\'re tickets agent. You can try type "event" for listing an events.', 'Event', 'Nothing'))
+  return lineClient.replyMessage(
+    event.replyToken,
+    welcomeTemplate('Hi there! We\'re tickets agent. You can try type "event" for listing an events.', 'Event', 'Nothing')
+  )
+  .catch(err => {
+    console.log(JSON.stringify(event))
+    console.error(tryGetErrorMessage(err))
+  })
 }
 
 export default {
