@@ -18,7 +18,7 @@ const welcomeTemplate = (message, ...options) => {
 const eventType = 'follow'
 
 const handler = (lineClient) => async (event) => {
-  return lineClient.replyMessage(event.replyToken, welcomeTemplate('Hi there, how can I help you?', 'Show Events', 'Nothing'))
+  return lineClient.replyMessage(event.replyToken, welcomeTemplate('Hi there! We\'re tickets agent. You can try type "event" for listing an events.', 'Event', 'Nothing'))
 }
 
 export default {
