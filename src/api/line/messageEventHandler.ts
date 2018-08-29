@@ -10,7 +10,7 @@ const PLATFORM_LINE = 'LINE'
 
 const handler = (lineClient, languageDetector) => {
   return async (event) => {
-    if (!event || !event.message || !event.text) {
+    if (!event || !event.message || !event.message.text) {
       console.error(`something wrong here !!!`)
       console.error(JSON.stringify(event))
       return
