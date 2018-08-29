@@ -10,6 +10,12 @@ const PLATFORM_LINE = 'LINE'
 
 const handler = (lineClient, languageDetector) => {
   return async (event) => {
+    if (!event || !event.message || !event.text) {
+      console.error(`something wrong here !!!`)
+      console.error(JSON.stringify(event))
+      return
+    }
+
     console.log(`\t--> ${event.message.text}`)
     const sessionClient = new dialogflow.SessionsClient()
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
