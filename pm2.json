@@ -1,6 +1,6 @@
 [
   {
-    "name": "ts-pm2-docker",
+    "name": "catcat-bots",
     "script": "src/index.ts",
     "instances": "1",
     "exec_mode" : "cluster",
