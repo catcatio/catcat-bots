@@ -6,6 +6,12 @@ export default (config) => {
   const router = Router()
 
   router.post('/webhook', middleware, (req, res) => {
+    try {
+      console.log(JSON.stringify(req.headers))
+      console.log(JSON.stringify(req.body))
+    } catch(err) {
+      console.error(err)
+    }
     Promise
       .all(req.body.events.map(eventHandler))
       .then((result) => res.json(result))
