@@ -1,5 +1,10 @@
-[{
-  "name": "catcat-chatbot-hotwallet",
-  "script": "concurrently_bootstrap.js",
-  "instances": "1"
-}]
+[
+  {
+    "name": "ts-pm2-docker",
+    "script": "src/index.ts",
+    "instances": "1",
+    "exec_mode" : "cluster",
+    "ignore_watch": ["node_modules"],
+    "watch": true
+  }
+]
