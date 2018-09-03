@@ -2,9 +2,9 @@ const eventType = 'postback'
 
 import dialogflow from 'dialogflow';
 import structjson from '../dialogflow/structjson';
+import sessionHelper from '../../utils/sessionHelper'
 
 const projectId = 'catcatchatbot' //https://dialogflow.com/docs/agents#settings
-const sessionId = 'quickstart-session-id' // TODO sessionid management
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 const PLATFORM_LINE = 'LINE'
@@ -12,6 +12,7 @@ const PLATFORM_LINE = 'LINE'
 const handler = (lineClient) => {
   return async (event) => {
     const sessionClient = new dialogflow.SessionsClient()
+    const sessionId = sessionHelper.makeSessionId(event)
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
     const queryParamsPayload = {
       source: 'line',
