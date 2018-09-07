@@ -1,7 +1,7 @@
 const eventType = '*'
 
 const handler = () => async (event) => {
-  console.warn(JSON.stringify(event))
+  console.warn('unhandled event', JSON.stringify(event))
   return null
 }
 

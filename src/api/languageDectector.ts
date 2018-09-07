@@ -14,7 +14,7 @@ export default async (text) => {
   let result = 'NA'
   try {
     const ret = await detectLanguage(text)
-    console.log(ret)
+    console.log(JSON.stringify(ret))
     if (!ret || !ret.language) {
       console.error('Bad detection result')
       return (result = defaultLanguage)
