@@ -41,7 +41,7 @@ const handler = (lineClient, languageDetector) => {
     return sessionClient.detectIntent(query)
       .then(response => {
         const result = response[0].queryResult
-        // console.log(JSON.stringify(response[0].queryResult, null, 2))
+        console.log(JSON.stringify(response[0].queryResult))
         if (result.fulfillmentText) {
           console.log(`\t<-- ${result.fulfillmentText}`)
           lineClient.replyMessage(event.replyToken, { type: 'text', text: result.fulfillmentText })
@@ -53,13 +53,15 @@ const handler = (lineClient, languageDetector) => {
 
           if (!replyMsg) { return }
 
-          if (replyMsg.message === 'payload') {
+          if (replyMsg.message === 'payload') { // from dialogflow custom response
             const payload: any = structjson.structProtoToJson(replyMsg.payload)
             const linePayload = payload.line
             console.log(`\t<-- ${JSON.stringify(linePayload)}`)
             return linePayload && lineClient.replyMessage(event.replyToken, linePayload)
           } else {
-            return lineClient.replyMessage(event.replyToken, replyMsg[replyMsg.message])
+            const msg = replyMsg[replyMsg.message]
+            console.log(`\t<-- ${msg}`)
+            return lineClient.replyMessage(event.replyToken, msg)
           }
         }
       })
