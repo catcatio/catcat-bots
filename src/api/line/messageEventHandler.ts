@@ -18,13 +18,12 @@ const getUserId = (source) => {
 const handler = (lineClient, languageDetector) => {
   return async (event) => {
     if (!event || !event.message || !event.message.text) {
-      console.error(`something wrong here !!!`)
-      console.error(JSON.stringify(event))
+      console.error('unsupported message type', JSON.stringify(event))
       return
     }
 
     const userId = getUserId(event.source)
-    console.log(`\t${userId} --> [message] ${event.message.text}`)
+    console.log(`[message]\t${userId} --> ${event.message.text}`)
     const sessionClient = new dialogflow.SessionsClient()
     const sessionId = sessionHelper.makeSessionId(event)
     const sessionPath = sessionClient.sessionPath(projectId, sessionId)
@@ -51,7 +50,7 @@ const handler = (lineClient, languageDetector) => {
         const result = response[0].queryResult
         console.log(JSON.stringify(response[0].queryResult))
         if (result.fulfillmentText) {
-          console.log(`\t${userId} <-- [message] ${result.fulfillmentText}`)
+          console.log(`[message]\t${userId} <-- ${result.fulfillmentText}`)
           lineClient.replyMessage(event.replyToken, { type: 'text', text: result.fulfillmentText })
 
         } else if (result.fulfillmentMessages && result.fulfillmentMessages.length > 0) {
@@ -64,11 +63,11 @@ const handler = (lineClient, languageDetector) => {
           if (replyMsg.message === 'payload') { // from dialogflow custom response
             const payload: any = structjson.structProtoToJson(replyMsg.payload)
             const linePayload = payload.line
-            console.log(`\t${userId} <-- [message] ${JSON.stringify(linePayload)}`)
+            console.log(`[message]\t${userId} <-- ${JSON.stringify(linePayload)}`)
             return linePayload && lineClient.replyMessage(event.replyToken, linePayload)
           } else {
             const msg = replyMsg[replyMsg.message]
-            console.log(`\t${userId} <-- [message] ${msg}`)
+            console.log(`[message]\t${userId} <-- ${msg}`)
             return lineClient.replyMessage(event.replyToken, msg)
           }
         }

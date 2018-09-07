@@ -40,14 +40,14 @@ const handler = (lineClient) => {
       }
     }
 
-    console.log(`\t${userId} --> [postback] ${event.postback.data}`)
+    console.log(`[postback]\t${userId} --> ${event.postback.data}`)
 
     return sessionClient.detectIntent(query)
       .then(response => {
         const result = response[0].queryResult
         // console.log(JSON.stringify(response[0].queryResult, null, 2))
         if (result.fulfillmentText) {
-          console.log(`\t<-- [postback] ${result.fulfillmentText}`)
+          console.log(`[postback]\t<-- ${result.fulfillmentText}`)
           lineClient.replyMessage(event.replyToken, { type: 'text', text: result.fulfillmentText })
 
         } else if (result.fulfillmentMessages && result.fulfillmentMessages.length > 0) {
@@ -60,10 +60,12 @@ const handler = (lineClient) => {
           if (replyMsg.message === 'payload') {
             const payload: any = structjson.structProtoToJson(replyMsg.payload)
             const linePayload = payload.line
-            console.log(`\t<-- [postback] ${JSON.stringify(linePayload)}`)
+            console.log(`[postback]\t<-- ${JSON.stringify(linePayload)}`)
             return linePayload && lineClient.replyMessage(event.replyToken, linePayload)
           } else {
-            return lineClient.replyMessage(event.replyToken, replyMsg[replyMsg.message])
+            const msg = replyMsg[replyMsg.message]
+            console.log(`[postback]\t${userId} <-- ${msg}`)
+            return lineClient.replyMessage(event.replyToken, msg)
           }
         }
       })
