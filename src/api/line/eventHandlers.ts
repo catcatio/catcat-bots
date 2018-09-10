@@ -7,7 +7,7 @@ export default (lineClient, languageDetector) => {
   const eventHandlers = {
     [messageEventHandler.eventType]: messageEventHandler.handler(lineClient, languageDetector),
     [followEventHandler.eventType]: followEventHandler.handler(lineClient),
-    [postbackEventHandler.eventType]: postbackEventHandler.handler(lineClient)
+    [postbackEventHandler.eventType]: postbackEventHandler.handler(lineClient, languageDetector)
   }
 
   return (event) => {

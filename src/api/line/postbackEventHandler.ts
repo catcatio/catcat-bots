@@ -16,7 +16,7 @@ const getUserId = (source) => {
     : `???${randomString()}`
 }
 
-const handler = (lineClient) => {
+const handler = (lineClient, languageDetector) => {
   return async (event) => {
     const sessionClient = new dialogflow.SessionsClient()
     const sessionId = sessionHelper.makeSessionId(event)
@@ -31,7 +31,7 @@ const handler = (lineClient) => {
       queryInput: {
         text: {
           text: event.postback.data,
-          languageCode: 'en'
+          languageCode: await languageDetector(event.postback.data)
         },
       },
       queryParams: {
