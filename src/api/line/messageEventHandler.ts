@@ -19,7 +19,7 @@ const handler = (lineClient, languageDetector) => {
   return async (event) => {
     if (!event || !event.message || !event.message.text) {
       console.error('unsupported message type', JSON.stringify(event))
-      return
+      event.message.text = `message.${event.message.type}`
     }
 
     const userId = getUserId(event.source)
