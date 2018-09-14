@@ -31,7 +31,7 @@ const handler = (lineClient, languageDetector) => {
       queryInput: {
         text: {
           text: event.postback.data,
-          languageCode: await languageDetector(event.postback.data)
+          languageCode: await languageDetector(event.postback.data ? event.postback.data.substr(0, 12) : event.postback.data)
         },
       },
       queryParams: {

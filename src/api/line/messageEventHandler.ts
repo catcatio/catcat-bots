@@ -36,7 +36,7 @@ const handler = (lineClient, languageDetector) => {
       queryInput: {
         text: {
           text: event.message.text,
-          languageCode: await languageDetector(event.message.text)
+          languageCode: await languageDetector(event.message.text ? event.message.text.substr(0, 12) : event.message.text)
         },
       },
       queryParams: {
