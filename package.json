@@ -27,6 +27,7 @@
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-http-context": "^1.0.4",
+    "line-pay": "^1.0.11",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "tsconfig-paths": "^3.6.0"

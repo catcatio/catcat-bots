@@ -17,9 +17,10 @@ export const handler = (moviesRepository, lineClient, lineMessageFormatter, { us
   const movies = moviesRepository.getAllMovies()
 
   const x = movies.map(m => Object.assign({}, {hasPurchased: userStore[userId] && userStore[userId][m.id]}, m))
-  console.log(JSON.stringify(x))
+  // console.log(JSON.stringify(x))
   try {
     const message = lineMessageFormatter.listAllMovies(x, languageCode)
+    console.log(JSON.stringify(message))
     lineClient.pushMessage(userId, message)
   } catch (err) {
     console.log(intentName, err)

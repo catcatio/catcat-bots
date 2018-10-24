@@ -53,7 +53,7 @@ export default (config) => {
         agent.handleRequest(intentMap)
 
       } catch (error) {
-        console.error(error)
+        console.error('blockbuster', error)
       }
     }
   }

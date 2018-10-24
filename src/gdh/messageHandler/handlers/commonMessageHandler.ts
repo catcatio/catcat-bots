@@ -1,6 +1,6 @@
 import { SessionsClient } from 'dialogflow'
 import { IParsedMessage } from 'catcat-chatbot-framework'
-import languageDetector from '../../../utils/languageDetector'
+// import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
@@ -30,7 +30,7 @@ export const messageHandler = (config) =>
       queryInput: {
         text: {
           text: message,
-          languageCode: message ? await languageDetector(message.substr(0, 12)) : 'en'
+          languageCode: 'en' //message ? await languageDetector(message.substr(0, 12)) : 'en'
         },
       },
       queryParams: {

@@ -1,5 +1,5 @@
 export const formatCurrency = (amount, ommitDecimalIfZero = false) => {
-  const amountStr = amount.toLocaleString(undefined, {
+  const amountStr = amount == null ? "" : amount.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })

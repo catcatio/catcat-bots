@@ -7,7 +7,6 @@ const chatbots = {
 }
 const gdh = require(join(process.cwd(), 'gdh.config.json'))
 
-
 export default {
   isProduction: process.env.NODE_ENV === 'production',
   chatbots,
