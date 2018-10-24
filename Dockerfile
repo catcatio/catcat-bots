@@ -4,8 +4,16 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV NPM_CONFIG_LOGLEVEL warn
 
+RUN apk add --no-cache \
+    git \
+    build-base \
+    g++ \
+    python \
+    curl
+
 # Install PM2
-RUN pm2 install typescript \
+RUN npm i -g ts-node typescript tsconfig-paths \
+    && pm2 install typescript \
     && pm2 install pm2-logrotate \
     && pm2 set pm2-logrotate:max_size 10M \
     && pm2 set pm2-logrotate:compress true \
@@ -17,4 +25,4 @@ WORKDIR /usr/app
 
 VOLUME ["/usr/app"]
 
-ENTRYPOINT ["pm2-runtime", "start", "pm2.json"]
+# ENTRYPOINT ["pm2-runtime", "start", "pm2.json"]

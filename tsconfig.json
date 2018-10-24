@@ -9,6 +9,7 @@
     "skipDefaultLibCheck": true,
     "inlineSourceMap": true,
     "inlineSources": true,
+    "baseUrl": ".",
     "jsx": "react",
     "outDir": "lib",
     "lib": [

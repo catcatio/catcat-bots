@@ -1,19 +1,20 @@
-import * as Translate from '@google-cloud/translate';
+import { Translate } from '@google-cloud/translate'
 
-const translate = new Translate()
-const detectLanguage = (text): any => new Promise((resolve, reject) => {
+const detectLanguage = (translate: Translate, text): any => new Promise((resolve, reject) => {
   translate.detect(text, (err, results) => {
     if (err) { reject(err); return }
-    resolve (results)
+    resolve(results)
   })
 })
 
 export default async (text) => {
-  const defaultLanguage = 'en'
   const startTime = Date.now()
+
+  const translate = new Translate()
+  const defaultLanguage = 'en'
   let result = 'NA'
   try {
-    const ret = await detectLanguage(text)
+    const ret = await detectLanguage(translate, text)
     console.log(JSON.stringify(ret))
     if (!ret || !ret.language) {
       console.error('Bad detection result')

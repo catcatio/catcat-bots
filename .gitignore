@@ -24,3 +24,5 @@ yarn-error.log*
 *.log
 
 serviceAccountKey.json
+
+*.config.json
