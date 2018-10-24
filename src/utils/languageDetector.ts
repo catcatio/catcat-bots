@@ -8,6 +8,7 @@ const detectLanguage = (translate: Translate, text): any => new Promise((resolve
 })
 
 export default async (text) => {
+  return 'en'
   const startTime = Date.now()
 
   const translate = new Translate()

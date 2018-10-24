@@ -1,9 +1,17 @@
-// import { IParsedMessage } from 'catcat-chatbot-framework'
-// import { handlers } from './handlers'
+import messageHandler from './messageHandler'
+import fulfillmentHandler from './fulfillmentHandler'
 
-// export default (config) => {
-//   const handleMessage = handlers(config)
-//   return async (prasedMessage: IParsedMessage, originalMessage: any) => {
-//     return handleMessage(prasedMessage, originalMessage)
-//   }
-// }
+export default async (config) => {
+  const linePay = require('line-pay')
+  const linepay = new linePay(config.linepay)
+  config.linepay = linepay
+
+  return {
+    name: 'bookshelf',
+    messageHandler: messageHandler(config),
+    fulfillmentHandler: fulfillmentHandler(config),
+    providerConfigs: {
+      line: config.line
+    }
+  }
+}

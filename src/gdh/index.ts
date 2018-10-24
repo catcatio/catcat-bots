@@ -7,11 +7,11 @@ export default async (config) => {
   config.linepay = linepay
 
   return {
-  name: 'gdh',
-  messageHandler: messageHandler(config),
-  fulfillmentHandler: fulfillmentHandler(config),
-  providerConfigs: {
-    line: config.line
+    name: 'gdh',
+    messageHandler: messageHandler(config),
+    fulfillmentHandler: fulfillmentHandler(config),
+    providerConfigs: {
+      line: config.line
+    }
   }
-}
 }

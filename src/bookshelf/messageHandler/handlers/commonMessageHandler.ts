@@ -1,7 +1,8 @@
 import { SessionsClient } from 'dialogflow'
-import { IParsedMessage } from 'catcat-chatbot-framework'
+
 import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
+import { IParsedMessage } from 'catcat-chatbot-framework';
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 
@@ -48,17 +49,17 @@ export const messageHandler = (config) =>
           return result.fulfillmentText
         } else if (result.fulfillmentMessages && result.fulfillmentMessages.length > 0) {
           const targetPlatform = source ? source.toUpperCase() : PLATFORM_UNSPECIFIED
-          const replyMsgTarget = result.fulfillmentMessages.find(f => f.platform === targetPlatform)
+          const replyMsgLine = result.fulfillmentMessages.find(f => f.platform === targetPlatform)
           const replyMsgUnknown = result.fulfillmentMessages.find(f => f.platform === PLATFORM_UNSPECIFIED)
-          const replyMsg = replyMsgTarget || replyMsgUnknown
+          const replyMsg = replyMsgLine || replyMsgUnknown
 
           if (!replyMsg) { return }
 
           if (replyMsg.payload !== undefined) { // from dialogflow custom response
             const payload: any = structjson.structProtoToJson(replyMsg.payload)
-            const sourcePayload = payload[source]
-            console.log(`[${source}/${type}]\t${userId} <-- ${JSON.stringify(sourcePayload)}`)
-            return sourcePayload
+            const linePayload = payload.line
+            console.log(`[${source}/${type}]\t${userId} <-- ${JSON.stringify(linePayload)}`)
+            return linePayload
           } else if (replyMsg.text !== undefined) {
             const msg = replyMsg.text
             console.log(`[${source}/${type}]\t${userId} <-- ${JSON.stringify(msg)}`)

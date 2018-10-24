@@ -1,5 +1,5 @@
-import { IParsedMessage } from 'catcat-chatbot-framework'
 import { handlers } from './handlers'
+import { IParsedMessage } from 'catcat-chatbot-framework';
 
 export default (config) => {
   const handleMessage = handlers(config)

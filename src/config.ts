@@ -6,9 +6,10 @@ const chatbots = {
   port
 }
 const gdh = require(join(process.cwd(), 'gdh.config.json'))
-
+const bookshelf = require(join(process.cwd(), 'bookshelf.config.json'))
 export default {
   isProduction: process.env.NODE_ENV === 'production',
   chatbots,
-  gdh
+  gdh,
+  bookshelf
 }
