@@ -15,7 +15,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/translate": "^1.1.0",
+    "@google-cloud/translate": "^2.1.1",
     "@line/bot-sdk": "^6.1.1",
     "@rabbotio/noconsole": "^1.1.0",
     "actions-on-google": "^2.4.1",

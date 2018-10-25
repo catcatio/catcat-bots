@@ -1,6 +1,6 @@
 import { SessionsClient } from 'dialogflow'
 import { IParsedMessage } from 'catcat-chatbot-engine'
-// import languageDetector from '../../../utils/languageDetector'
+import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
@@ -15,6 +15,7 @@ export const messageHandler = (config) =>
       return null
     }
 
+    const detectLanguage = languageDetector(config.googleServiceAccountKey.apiKey)
     const sessionClient = new SessionsClient(config.googleServiceAccountKey)
     const sessionPath = sessionClient.sessionPath(projectId, userId)
 
@@ -30,7 +31,7 @@ export const messageHandler = (config) =>
       queryInput: {
         text: {
           text: message,
-          languageCode: 'en' //message ? await languageDetector(message.substr(0, 12)) : 'en'
+          languageCode: message ? await detectLanguage(message.substr(0, 12)) : 'en'
         },
       },
       queryParams: {

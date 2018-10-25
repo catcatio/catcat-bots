@@ -16,8 +16,8 @@ export const messageHandler = (config) =>
       return null
     }
 
+    const detectLanguage = languageDetector(config.googleServiceAccountKey.apiKey)
     const sessionClient = new SessionsClient(config.googleServiceAccountKey)
-
     const sessionPath = sessionClient.sessionPath(projectId, userId)
 
     const queryParamsPayload = {
@@ -32,7 +32,7 @@ export const messageHandler = (config) =>
       queryInput: {
         text: {
           text: message,
-          languageCode: message ? await languageDetector(message.substr(0, 12)) : 'en'
+          languageCode: message ? await detectLanguage(message.substr(0, 12)) : 'en'
         },
       },
       queryParams: {
