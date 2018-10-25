@@ -1,4 +1,4 @@
-import { IParsedMessage } from 'catcat-chatbot-framework'
+import { IParsedMessage } from 'catcat-chatbot-engine'
 import { handlers } from './handlers'
 
 export default (config) => {

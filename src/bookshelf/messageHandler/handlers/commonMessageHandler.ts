@@ -2,7 +2,7 @@ import { SessionsClient } from 'dialogflow'
 
 import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
-import { IParsedMessage } from 'catcat-chatbot-framework';
+import { IParsedMessage } from 'catcat-chatbot-engine';
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 

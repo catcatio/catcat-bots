@@ -1,4 +1,4 @@
-import { IParsedMessage } from "catcat-chatbot-framework";
+import { IParsedMessage } from "catcat-chatbot-engine";
 
 // TODO: inject this
 const welcomeMessageTemplate = (message, ...options) => {

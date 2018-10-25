@@ -1,7 +1,7 @@
 require('dotenv/config')
 require('@rabbotio/noconsole')
 
-import { chatbots } from 'catcat-chatbot-framework'
+import { chatbots } from 'catcat-chatbot-engine'
 import config from './config';
 import gdh from './gdh'
 import bookshelf from './bookshelf'
