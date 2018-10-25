@@ -1,6 +1,7 @@
 import * as intentHandlers from './intentHandlers'
 import * as request from 'request-promise-native'
 import { WebhookClient } from 'dialogflow-fulfillment'
+import Unicorn from '../../system/unicorn'
 
 const { Client } = require('@line/bot-sdk')
 
@@ -29,14 +30,15 @@ export default (config) => {
     }
   }
 
+  const unicorn = Unicorn(config)
+  const lineClient = new Client(config.line)
+
   const dialogflow = (config) => {
-    const lineClient = new Client(config.line)
-    const moviesRepository = require('./moviesRepository')
     const lineMessageFormatter = require('./messageFormatter/lineMessageFormatter').default(config)
     const intentMap = new Map()
 
     Object.keys(intentHandlers).forEach(key => {
-      intentMap.set(intentHandlers[key].intentName, intentHandlers[key].handler(moviesRepository, lineClient, lineMessageFormatter, config))
+      intentMap.set(intentHandlers[key].intentName, intentHandlers[key].handler(unicorn, lineClient, lineMessageFormatter, config))
     })
 
     return (request, response) => {
@@ -206,7 +208,7 @@ export default (config) => {
         } catch (errr) {
           console.log(errr.message)
         }
-        res.send({query, accessToken, id, profile, friendship })
+        res.send({ query, accessToken, id, profile, friendship })
 
       } catch (err) {
         console.log(err)
@@ -215,9 +217,17 @@ export default (config) => {
     }
   }
 
+  const registerConfirmation = (config) => {
+    return async (req, res) => {
+      unicorn.registerConfirm(req.query)
+      res.redirect('https://catcat.io')
+    }
+  }
+
   return {
     dialogflow: dialogflow(config),
     linepayconfirm: linepayconfirm(config),
-    linelogin: linelogin(config)
+    linelogin: linelogin(config),
+    registerConfirmation: registerConfirmation(config)
   }
 }

@@ -1,8 +1,7 @@
-import * as pocEcho from './pocEcho'
+import * as adminRegister from './adminRegisterHandler'
 import * as fallbackHandler from './fallbackHandler'
 
 export {
-  pocEcho,
+  adminRegister,
   fallbackHandler
 }
-

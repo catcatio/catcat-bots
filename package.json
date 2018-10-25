@@ -28,6 +28,7 @@
     "express": "^4.16.3",
     "express-http-context": "^1.0.4",
     "line-pay": "^1.0.11",
+    "mailgun-js": "^0.21.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "tsconfig-paths": "^3.6.0"

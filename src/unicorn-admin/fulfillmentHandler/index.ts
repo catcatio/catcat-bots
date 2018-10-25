@@ -1,7 +1,7 @@
 import * as intentHandlers from './intentHandlers'
 import * as request from 'request-promise-native'
 import { WebhookClient } from 'dialogflow-fulfillment'
-
+import UnicornAdmin from '../../system/unicorn-admin'
 const { Client } = require('@line/bot-sdk')
 
 export default (config) => {
@@ -29,14 +29,15 @@ export default (config) => {
     }
   }
 
+  const unicornAdmin = UnicornAdmin(config)
+  const lineClient = new Client(config.line)
+
   const dialogflow = (config) => {
-    const lineClient = new Client(config.line)
-    const moviesRepository = require('./moviesRepository')
     const lineMessageFormatter = require('./messageFormatter/lineMessageFormatter').default(config)
     const intentMap = new Map()
 
     Object.keys(intentHandlers).forEach(key => {
-      intentMap.set(intentHandlers[key].intentName, intentHandlers[key].handler(moviesRepository, lineClient, lineMessageFormatter, config))
+      intentMap.set(intentHandlers[key].intentName, intentHandlers[key].handler(unicornAdmin, lineClient, lineMessageFormatter, config))
     })
 
     return (request, response) => {
@@ -59,7 +60,6 @@ export default (config) => {
   }
 
   const linepayconfirm = (config) => {
-    const lineClient = new Client(config.line)
     const lineMessageFormatter = require('./messageFormatter/lineMessageFormatter').default(config)
 
     const { transactionStore, linepay, userStore } = config
@@ -218,6 +218,6 @@ export default (config) => {
   return {
     dialogflow: dialogflow(config),
     linepayconfirm: linepayconfirm(config),
-    linelogin: linelogin(config)
+    linelogin: linelogin(config),
   }
 }
