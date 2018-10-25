@@ -6,6 +6,7 @@ import config from './config';
 import gdh from './gdh'
 import bookshelf from './bookshelf'
 import unicorn from './unicorn';
+import unicornAdmin from './unicorn-admin';
 
 console.log('config.isProduction: ', config.isProduction)
 
@@ -14,6 +15,7 @@ chatbots(config.chatbots)
     bots.register(await gdh(config.gdh))
     bots.register(await bookshelf(config.bookshelf))
     bots.register(await unicorn(config.unicorn))
+    bots.register(await unicornAdmin(config.unicornAdmin))
     bots.start()
     return bots
   })

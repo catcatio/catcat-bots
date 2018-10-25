@@ -12,18 +12,22 @@ const extendLinepay = (config) => {
   config.linepay = linepay
 }
 
-const gdh = require(join(process.cwd(), 'gdh.config.json'))
-const bookshelf = require(join(process.cwd(), 'bookshelf.config.json'))
-const unicorn = require(join(process.cwd(), 'unicorn.config.json'))
+const loadConfig = (name) => {
+  const config = require(join(process.cwd(), `${name}.config.json`))
+  extendLinepay(config)
+  return config
+}
 
-extendLinepay(gdh)
-extendLinepay(bookshelf)
-extendLinepay(unicorn)
+const gdh = loadConfig('gdh')
+const bookshelf = loadConfig('bookshelf')
+const unicorn = loadConfig('unicorn')
+const unicornAdmin = loadConfig('unicorn-admin')
 
 export default {
   isProduction: process.env.NODE_ENV === 'production',
   chatbots,
   gdh,
   bookshelf,
-  unicorn
+  unicorn,
+  unicornAdmin
 }
