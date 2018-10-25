@@ -1,14 +1,14 @@
 import { SessionsClient } from 'dialogflow'
 
 import languageDetector from '../../../utils/languageDetector'
-import structjson from '../../../utils/dialogflow/structjson';
-import { IParsedMessage } from 'catcat-chatbot-engine';
+import structjson from '../../../utils/dialogflow/structjson'
+import { IParsedMessage } from 'catcat-chatbot-engine'
 
 const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 
 export const messageHandler = (config) =>
   async (prasedMessage: IParsedMessage, originalMessage: any) => {
-    const projectId = config.googleProject
+    const projectId = config.googleServiceAccountKey.projectId
     const { message, userId, source, type } = prasedMessage
     console.log(`[${source}/${type}]\t${userId} --> ${message}`)
 
@@ -16,7 +16,8 @@ export const messageHandler = (config) =>
       return null
     }
 
-    const sessionClient = new SessionsClient()
+    const sessionClient = new SessionsClient(config.googleServiceAccountKey)
+
     const sessionPath = sessionClient.sessionPath(projectId, userId)
 
     const queryParamsPayload = {
