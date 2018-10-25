@@ -1,9 +1,9 @@
-
 version: "3"
 
 services:
   catcat-bots:
     container_name: catcat-bots
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,6 +16,8 @@ services:
     ports:
       - "${PORT:-9095}:${PORT:-9095}"
       - "${PM2_PORT:-8095}:${PM2_PORT:-8095}"
+    depends_on:
+      - postgres
     volumes:
       - .:/usr/app
     # logging:
@@ -24,3 +26,29 @@ services:
     #     gelf-address: udp://localhost:${LS_PORT:-12201}
     #     tag: "catcat-bots"
     command: sh scripts/startup.sh
+
+  postgres:
+    image: postgres:9.6
+    restart: unless-stopped
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./scripts/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - PGADMIN_PORT=${PGADMIN_PORT:-9095}
+    ports:
+      - ${PGADMIN_PORT:-9095}:80
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@example.com
+      PGADMIN_DEFAULT_PASSWORD: password

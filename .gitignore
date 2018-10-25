@@ -26,3 +26,5 @@ yarn-error.log*
 serviceAccountKey.json
 
 *.config.json
+pg_data
+pgadmin_data

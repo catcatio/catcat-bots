@@ -1,11 +1,7 @@
-export const intentName = 'admin.register'
+export const intentName = 'producer.register'
 
 export const handler = (unicorn, lineClient, lineMessageFormatter, config) => async (agent) => {
   console.log(intentName)
-  console.log('XXXXXX')
-  console.log(agent.userId)
-  console.log(agent.queryText)
-  console.log('XXXXXX')
 
   const {
     requestSource,

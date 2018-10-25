@@ -1,7 +1,7 @@
-import * as adminRegister from './adminRegisterHandler'
+import * as producerRegister from './producerRegisterHandler'
 import * as fallbackHandler from './fallbackHandler'
 
 export {
-  adminRegister,
+  producerRegister,
   fallbackHandler
 }

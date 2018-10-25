@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "noEmitOnError": false,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es6",
+    "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "skipDefaultLibCheck": true,
