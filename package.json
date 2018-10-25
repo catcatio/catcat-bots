@@ -29,8 +29,11 @@
     "express-http-context": "^1.0.4",
     "line-pay": "^1.0.11",
     "mailgun-js": "^0.21.0",
+    "pg": "^7.5.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
+    "sequelize": "^4.41.0",
+    "sequelize-typescript": "^0.6.6",
     "tsconfig-paths": "^3.6.0"
   },
   "devDependencies": {
