@@ -1,5 +1,5 @@
 import * as intentHandlers from './intentHandlers'
-const { Client } = require('@line/bot-sdk')
+import { Client } from "@line/bot-sdk";
 
 const { WebhookClient } = require('dialogflow-fulfillment')
 
@@ -99,8 +99,8 @@ export default (config) => {
 
         if (!confirmResponse) {
           console.error('EVENT_BOOK_ERROR')
-          let msg = 'Sorry, something went wrong. We will get back to you asap.'
-          await lineClient.pushMessage(transaction.userId, msg)
+          let text = 'Sorry, something went wrong. We will get back to you asap.'
+          await lineClient.pushMessage(transaction.userId, {type: 'text', text})
           return 'EVENT_BOOK_ERROR'
         }
 

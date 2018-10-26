@@ -1,6 +1,6 @@
-export const intentName = 'producer.register'
+export const intentName = 'admin.setupgroup'
 
-export const handler = (unicorn, lineClient, lineMessageFormatter, config) => async (agent) => {
+export const handler = (unicorn) => async (agent) => {
   console.log(intentName)
 
   const {
@@ -17,7 +17,7 @@ export const handler = (unicorn, lineClient, lineMessageFormatter, config) => as
 
   const email = parameters['email']
   try {
-    const result = await unicorn.register(email, { userId })
+    const result = await unicorn.adminSetupGroup(email, { userId, requestSource })
     return null
   } catch (err) {
     console.log(intentName, err)

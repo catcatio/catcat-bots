@@ -8,6 +8,7 @@
     "build": "tsc -w",
     "build:once": "tsc",
     "dev": "nodemon --watch src --ext ts,js,json --exec \"ts-node .\"",
+    "test": "nodemon --watch src --ext ts,js,json --exec \"ts-node src/test.ts\"",
     "lint": "eslint .",
     "_setup": "npm link ../catcat-chatbot-engine"
   },

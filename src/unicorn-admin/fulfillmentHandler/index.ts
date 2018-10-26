@@ -1,8 +1,8 @@
 import * as intentHandlers from './intentHandlers'
 import * as request from 'request-promise-native'
 import { WebhookClient } from 'dialogflow-fulfillment'
-import UnicornAdmin from '../../system/unicorn-admin'
-const { Client } = require('@line/bot-sdk')
+import UnicornAdmin from '../../app/unicorn-admin'
+import { Client } from "@line/bot-sdk";
 
 export default (config) => {
   const getLanguageCode = request => {
@@ -100,8 +100,8 @@ export default (config) => {
 
         if (!confirmResponse) {
           console.error('EVENT_BOOK_ERROR')
-          let msg = 'Sorry, something went wrong. We will get back to you asap.'
-          await lineClient.pushMessage(transaction.userId, msg)
+          let text = 'Sorry, something went wrong. We will get back to you asap.'
+          await lineClient.pushMessage(transaction.userId, {type: 'text', text })
           return 'EVENT_BOOK_ERROR'
         }
 

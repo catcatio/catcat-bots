@@ -2,9 +2,9 @@ import { facebookClient } from './facebookClient'
 import { lineClient } from './lineClient'
 import { IMessagingClient } from './messagingClient'
 
-export const initMessagingProvider = (firebaseConfig): IMessageingProvider => {
-  const line = lineClient(firebaseConfig)
-  const facebook = facebookClient(firebaseConfig)
+export default (config): IMessageingProvider => {
+  const line = lineClient(config.line)
+  // const facebook = facebookClient(config.facebook)
 
   const fromString = (provider: string): IMessagingClient => {
     const lcProvider = (provider || '').toLowerCase()
@@ -12,8 +12,8 @@ export const initMessagingProvider = (firebaseConfig): IMessageingProvider => {
       case line.providerName:
         return line
 
-      case facebook.providerName:
-        return facebook
+      // case facebook.providerName:
+      //   return facebook
 
       default:
         return null
@@ -27,9 +27,9 @@ export const initMessagingProvider = (firebaseConfig): IMessageingProvider => {
 
     return ownerProviders.hasOwnProperty(line.providerName)
       ? line
-      : ownerProviders.hasOwnProperty(facebook.providerName)
-        ? facebook :
-        null
+      // : ownerProviders.hasOwnProperty(facebook.providerName)
+      //   ? facebook
+        : null
   }
 
   const get = (provider: string | object): IMessagingClient => {

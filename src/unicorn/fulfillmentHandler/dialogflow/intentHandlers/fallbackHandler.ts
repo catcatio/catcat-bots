@@ -1,7 +1,7 @@
 
 export const intentName = null
 
-export const handler = (unicorn, lineClient, lineMessageFormatter, config) => async (agent) => {
+export const handler = (unicorn) => async (agent) => {
   console.log(intentName)
   const {
     requestSource,

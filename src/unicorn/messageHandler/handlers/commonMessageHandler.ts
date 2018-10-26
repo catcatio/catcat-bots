@@ -7,7 +7,7 @@ const PLATFORM_UNSPECIFIED = 'PLATFORM_UNSPECIFIED'
 
 export const messageHandler = (config) =>
   async (prasedMessage: IParsedMessage, originalMessage: any) => {
-    const projectId = config.googleServiceAccountKey.projectId
+    const googleKey = config.googleServiceAccountKey
     const { message, userId, source, type } = prasedMessage
     console.log(`[${source}/${type}]\t${userId} --> ${message}`)
 
@@ -15,9 +15,9 @@ export const messageHandler = (config) =>
       return null
     }
 
-    const detectLanguage = languageDetector(config.googleServiceAccountKey.apiKey)
-    const sessionClient = new SessionsClient(config.googleServiceAccountKey)
-    const sessionPath = sessionClient.sessionPath(projectId, userId)
+    const detectLanguage = languageDetector(googleKey.apiKey)
+    const sessionClient = new SessionsClient(googleKey)
+    const sessionPath = sessionClient.sessionPath(googleKey.projectId, userId)
 
     const queryParamsPayload = {
       source,

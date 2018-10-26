@@ -1,11 +1,8 @@
 import { IMessagingClient } from "./messagingClient"
 import { Client } from "@line/bot-sdk";
 
-export const lineClient = ({ channelAccessToken, channelSecret }): IMessagingClient => {
-  const lineClient = new Client({
-    channelAccessToken,
-    channelSecret
-  })
+export const lineClient = (lineConfig): IMessagingClient => {
+  const lineClient = new Client(lineConfig)
 
   const sendMessages = (recipientId, ...messages) => {
     return lineClient.pushMessage(recipientId, messages);
@@ -23,7 +20,7 @@ export const lineClient = ({ channelAccessToken, channelSecret }): IMessagingCli
       'text': textMessage
     })
 
-    return sendMessages(recipientId, ...messages).catch(err => console.log(err))
+    return sendMessages(recipientId, ...messages).catch(err => console.error(err))
   }
 
   const sendMessage = (recipientId, ...text) => {
@@ -32,11 +29,11 @@ export const lineClient = ({ channelAccessToken, channelSecret }): IMessagingCli
       'text': t
     }))
 
-    return sendMessages(recipientId, ...messages).catch(err => console.log(err))
+    return sendMessages(recipientId, ...messages).catch(err => console.error(err))
   }
 
   const sendCustomMessages = (recipientId, ...messages) => {
-    return sendMessages(recipientId, ...messages).catch(err => console.log(err))
+    return sendMessages(recipientId, ...messages).catch(err => console.error(err))
   }
 
   const getProfile = (userId) => {
