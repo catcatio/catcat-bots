@@ -123,10 +123,12 @@ const adminRegister = (messagingProvider, messageFormatter, config) => async (em
     .catch(console.error)
 }
 
-const producerRegistrationConfirm = async (aes, registerationInfo, messagingProvider, messageFormatter) => {
+const producerRegistrationConfirm = async (aes, registerationInfo, messagingProvider, messageFormatter, { adminGroup } ) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
+  const adminGroupId = adminGroup[registerationInfo.source.toLowerCase()]
 
+  console.log(registerationInfo)
   let message = `Thanks for confirming your email, we will let you know when done: ${registerationInfo.role}`
   await messagingClient.sendMessage(registerationInfo.userId, message)
   registerationInfo.confirmed = true
@@ -135,7 +137,13 @@ const producerRegistrationConfirm = async (aes, registerationInfo, messagingProv
   const approvalUrl = `https://bots.catcat.io/unicorn/fulfillment/approveRegistration?token=${encoded.toString('hex')}`
 
   console.log('approvalUrl', approvalUrl)
-  // NC:TODO: post message to admin group
+  const profile = await messagingClient.getProfile(registerationInfo.userId)
+  console.log(profile)
+  console.log(adminGroup, adminGroupId)
+
+  // TODO: format admin message as flex
+  let confirmMessage = `New User Registration: ${profile.displayName} as ${registerationInfo.role}`
+  await messagingClient.sendImage(adminGroupId, profile.pictureUrl, profile.pictureUrl, confirmMessage)
 }
 
 const adminRegistrationConfirm =  async (registerationInfo, messagingProvider, messageFormatter) => {
@@ -153,18 +161,24 @@ const registerConfirmation = (messagingProvider, messageFormatter, config) => as
 
   switch(registerationInfo.role) {
     case 'producer':
-      return producerRegistrationConfirm(aes, registerationInfo, messagingProvider, messageFormatter)
+      return producerRegistrationConfirm(aes, registerationInfo, messagingProvider, messageFormatter, config)
     case 'admin':
       return adminRegistrationConfirm(registerationInfo, messagingProvider, messageFormatter)
   }
 }
 
-const approveProducerRegistration = (registerationInfo, messagingProvider, messageFormatter) => {
+const approveProducerRegistration = async (registerationInfo, messagingProvider, messageFormatter, { adminGroup }) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
+  const adminGroupId = adminGroup[registerationInfo.source.toLowerCase()]
 
   let message = `Hi ${registerationInfo.email}, welcome to ${registerationInfo.role} mode`
-  messagingClient.sendMessage(registerationInfo.userId, message)
+  await messagingClient.sendMessage(registerationInfo.userId, message)
+
+  const profile = await messagingClient.getProfile(registerationInfo.userId)
+
+  let confirmMessage = `confirmed: ${profile.displayName} as ${registerationInfo.role}`
+  await messagingClient.sendImage(adminGroupId, profile.pictureUrl, profile.pictureUrl, confirmMessage)
 }
 
 const approveRegistration = (messagingProvider, messageFormatter, config) => async (params) => {
@@ -178,7 +192,7 @@ const approveRegistration = (messagingProvider, messageFormatter, config) => asy
 
   switch(registerationInfo.role) {
     case 'producer':
-      return approveProducerRegistration(registerationInfo, messagingProvider, messageFormatter)
+      return approveProducerRegistration(registerationInfo, messagingProvider, messageFormatter, config)
   }
 
   // NC:TODO: handle no support

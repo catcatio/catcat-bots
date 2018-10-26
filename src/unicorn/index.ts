@@ -4,12 +4,12 @@ import Unicorn from '../app/unicorn'
 
 export default async (config) => {
   const unicorn = Unicorn(config)
-  // await unicorn.database.initDb()
+  await unicorn.database.initDb()
 
   return {
     name: 'unicorn',
     messageHandler: messageHandler(unicorn.config),
-    fulfillmentHandler: null, // fulfillmentHandler(unicorn),
+    fulfillmentHandler: fulfillmentHandler(unicorn),
     providerConfigs: {
       line: config.line
     }
