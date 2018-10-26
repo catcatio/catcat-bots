@@ -1,5 +1,5 @@
 import { SessionsClient } from 'dialogflow'
-import { IParsedMessage } from 'catcat-chatbot-engine'
+import { IParsedMessage } from '@catcat/chatbot-engine'
 import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
 
@@ -9,6 +9,7 @@ export const messageHandler = (config) =>
   async (prasedMessage: IParsedMessage, originalMessage: any) => {
     const googleKey = config.googleServiceAccountKey
     const { message, userId, source, type } = prasedMessage
+    console.log(JSON.stringify(prasedMessage))
     console.log(`[${source}/${type}]\t${userId} --> ${message}`)
 
     if (type !== 'textMessage') {

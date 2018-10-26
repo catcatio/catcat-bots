@@ -1,5 +1,5 @@
 import { SessionsClient } from 'dialogflow'
-import { IParsedMessage } from 'catcat-chatbot-engine'
+import { IParsedMessage } from '@catcat/chatbot-engine'
 import languageDetector from '../../../utils/languageDetector'
 import structjson from '../../../utils/dialogflow/structjson';
 

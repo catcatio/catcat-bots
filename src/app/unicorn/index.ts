@@ -1,4 +1,3 @@
-import { Client } from "@line/bot-sdk";
 import AESCrypto from '../../utils/AESCrypto';
 import Database from './database'
 import MessageFormatter from './messageFormatter'
@@ -67,18 +66,18 @@ const producerRegister = (messagingProvider, messageFormatter, config) => async 
   const formatter = messageFormatter(requestSource)
   const messagingClient = messagingProvider.get(requestSource)
   const role = 'producer'
-  const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role })))
+  const source = requestSource
+  const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role, source })))
 
   const profile = await messagingClient.getProfile(userId)
 
   let message = `Hi ${profile.displayName}, please confirm registration in your email`
-  messagingClient.sendMessage(userId, message)
+  await messagingClient.sendMessage(userId, message)
 
   const confirmationUrl = `https://bots.catcat.io/unicorn/fulfillment/registerConfirmation?token=${encoded.toString('hex')}`
-  console.log(confirmationUrl)
+  console.log('producerRegister', confirmationUrl)
 
   const mailgun = require('mailgun-js')(config.mailgunconfig)
-
   const html = confirmEmailTemplate(confirmationUrl)
 
   const mailOption = {
@@ -99,13 +98,14 @@ const adminRegister = (messagingProvider, messageFormatter, config) => async (em
   const formatter = messageFormatter(requestSource)
   const messagingClient = messagingProvider.get(requestSource)
   const role = 'admin'
-  const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role })))
+  const source = requestSource
+  const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role, source })))
 
   let message = `Hi ${email}, please confirm registration in your email`
-  messagingClient.sendMessage(userId, message)
+  await messagingClient.sendMessage(userId, message)
 
   const confirmationUrl = `https://bots.catcat.io/unicorn/fulfillment/registerConfirmation?token=${encoded.toString('hex')}`
-  console.log(confirmationUrl)
+  console.log('adminRegister', confirmationUrl)
 
   const mailgun = require('mailgun-js')(config.mailgunconfig)
 
@@ -123,25 +123,43 @@ const adminRegister = (messagingProvider, messageFormatter, config) => async (em
     .catch(console.error)
 }
 
-const producerEmailConfirm = (messagingProvider, messageFormatter, config) => async (params) => {
-  const aes = AESCrypto(config.encryptionKey)
-  const decoded = aes.decrypt(Buffer.from(params.token, 'hex'))
-  const registerationInfo = JSON.parse(decoded.toString())
-
+const producerRegistrationConfirm = async (aes, registerationInfo, messagingProvider, messageFormatter) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
 
-  let message = `Hi ${registerationInfo.email}, welcome to ${registerationInfo.role} mode`
-  messagingClient.sendMessage(registerationInfo.userId, message)
+  let message = `Thanks for confirming your email, we will let you know when done: ${registerationInfo.role}`
+  await messagingClient.sendMessage(registerationInfo.userId, message)
+  registerationInfo.confirmed = true
 
+  const encoded = aes.encrypt(Buffer.from(JSON.stringify(registerationInfo)))
+  const approvalUrl = `https://bots.catcat.io/unicorn/fulfillment/approveRegistration?token=${encoded.toString('hex')}`
+
+  console.log('approvalUrl', approvalUrl)
   // NC:TODO: post message to admin group
 }
 
-const adminEmailConfirm = (messagingProvider, messageFormatter, config) => async (params) => {
+const adminRegistrationConfirm =  async (registerationInfo, messagingProvider, messageFormatter) => {
+  const formatter = messageFormatter(registerationInfo.source)
+  const messagingClient = messagingProvider.get(registerationInfo.source)
+
+  let message = `Hi ${registerationInfo.email}, welcome to ${registerationInfo.role} mode`
+  await messagingClient.sendMessage(registerationInfo.userId, message)
+}
+
+const registerConfirmation = (messagingProvider, messageFormatter, config) => async (params) => {
   const aes = AESCrypto(config.encryptionKey)
   const decoded = aes.decrypt(Buffer.from(params.token, 'hex'))
   const registerationInfo = JSON.parse(decoded.toString())
 
+  switch(registerationInfo.role) {
+    case 'producer':
+      return producerRegistrationConfirm(aes, registerationInfo, messagingProvider, messageFormatter)
+    case 'admin':
+      return adminRegistrationConfirm(registerationInfo, messagingProvider, messageFormatter)
+  }
+}
+
+const approveProducerRegistration = (registerationInfo, messagingProvider, messageFormatter) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
 
@@ -149,18 +167,32 @@ const adminEmailConfirm = (messagingProvider, messageFormatter, config) => async
   messagingClient.sendMessage(registerationInfo.userId, message)
 }
 
-const adminApproveProducerRegistration = (config) => async (params) => {
+const approveRegistration = (messagingProvider, messageFormatter, config) => async (params) => {
+  const aes = AESCrypto(config.encryptionKey)
+  const decoded = aes.decrypt(Buffer.from(params.token, 'hex'))
+  const registerationInfo = JSON.parse(decoded.toString())
 
+  if (!registerationInfo.confirmed) {
+    throw new Error('EMAIL_NOT_CONFIRMED')
+  }
+
+  switch(registerationInfo.role) {
+    case 'producer':
+      return approveProducerRegistration(registerationInfo, messagingProvider, messageFormatter)
+  }
+
+  // NC:TODO: handle no support
 }
 
 export default (config) => {
   const messageFormatter = MessageFormatter(config)
   const messagingProvider = MessagingProvider(config)
+
   return {
     producerRegister: producerRegister(messagingProvider, messageFormatter, config),
     adminRegister: adminRegister(messagingProvider, messageFormatter, config),
-    producerEmailConfirm: producerEmailConfirm(messagingProvider, messageFormatter, config),
-    adminEmailConfirm: adminEmailConfirm(messagingProvider, messageFormatter, config),
+    registerConfirmation: registerConfirmation(messagingProvider, messageFormatter, config),
+    approveRegistration: approveRegistration(messagingProvider, messageFormatter, config),
     database: Database(config),
     config: config
   }

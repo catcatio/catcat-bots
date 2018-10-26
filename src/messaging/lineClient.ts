@@ -2,10 +2,10 @@ import { IMessagingClient } from "./messagingClient"
 import { Client } from "@line/bot-sdk";
 
 export const lineClient = (lineConfig): IMessagingClient => {
-  const lineClient = new Client(lineConfig)
+  const client = new Client(lineConfig)
 
   const sendMessages = (recipientId, ...messages) => {
-    return lineClient.pushMessage(recipientId, messages);
+    return client.pushMessage(recipientId, messages);
   }
 
   const sendImage = async (recipientId, imageUrl, thumbnailUrl, textMessage = null) => {
@@ -37,7 +37,7 @@ export const lineClient = (lineConfig): IMessagingClient => {
   }
 
   const getProfile = (userId) => {
-    return lineClient.getProfile(userId)
+    return client.getProfile(userId)
   }
 
   return {

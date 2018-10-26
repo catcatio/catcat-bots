@@ -1,6 +1,6 @@
 import { messageHandler as commonHandler } from './commonMessageHandler'
 import { messageHandler as line } from './lineMessageHandler'
-import { IParsedMessage } from 'catcat-chatbot-engine';
+import { IParsedMessage } from '@catcat/chatbot-engine';
 
 export const handlers = (config) => {
   const messageHandlers = {
