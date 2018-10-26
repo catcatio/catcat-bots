@@ -1,3 +1,76 @@
+import { FlexMessageBuilder, FlexComponentBuilder } from "../../../utils/lineMessageBuilder"
+import { FlexImage } from "@line/bot-sdk";
+
+const limitChar = (str, limit) => {
+  return `${str.substr(0, limit)}${str.length > limit ? '...' : ''}`
+}
+
+const approveRegistrationTemplate = (imageResizeService) => (imageUrl, displayName, role, email, approvalUrl, rejectUrl) => {
+  console.log(`${imageResizeService}${encodeURIComponent(imageUrl)}`)
+
+  const lineTemplate = new FlexMessageBuilder()
+  const template = lineTemplate.flexMessage(`Approve registration ${displayName}`)
+    .addBubble()
+    .addHeader()
+      .setLayout('vertical')
+      .addComponents(
+        FlexComponentBuilder.flexText()
+        .setText('Registration Approval')
+        .setWeight('bold')
+        .setGarvity('center')
+        .build()
+      )
+    .addHero(FlexComponentBuilder.flexImage()
+      .setUrl(`${imageResizeService}${encodeURIComponent(imageUrl)}&size=240&seed=${Date.now()}`)
+      .setSize('3xl')
+      .setAspectRatio('1:1')
+      .setAspectMode('cover')
+      .build() as FlexImage)
+    .addBody()
+    .setSpacing('md')
+    .addComponents(
+      FlexComponentBuilder.flexText()
+        .setText(`${displayName}`)
+        .setWrap(true)
+        .setWeight('bold')
+        .setGarvity('center')
+        .setSize('md')
+        .build(),
+      FlexComponentBuilder.flexText()
+        .setText(`${email}`)
+        .setWrap(true)
+        .setGarvity('center')
+        .setSize('md')
+        .build(),
+      FlexComponentBuilder.flexText()
+        .setText(role)
+        .setWrap(true)
+        .setGarvity('center')
+        .setSize('md')
+        .build(),
+      FlexComponentBuilder.flexButton()
+        .setStyle('primary')
+        .setColor('#718792')
+        .setAction({
+          'type': 'uri',
+          'uri': approvalUrl,
+          'label': 'Approve'
+        })
+        .build(),
+      FlexComponentBuilder.flexButton()
+        .setStyle('primary')
+        .setColor('#718792')
+        .setAction({
+          'type': 'uri',
+          'uri': rejectUrl,
+          'label': 'Reject'
+        })
+        .build()
+    )
+  console.log(JSON.stringify(template.build()))
+  return template.build()
+}
+
 const messageTemplate = (message) => {
   var messages = []
   if (typeof message === 'string') {
@@ -48,7 +121,8 @@ const quickReply = (message, ...options) => {
   return msg
 }
 
-export default ({ }) => ({
+export default ({ imageResizeService }) => ({
+  approveRegistrationTemplate: approveRegistrationTemplate(imageResizeService),
   messageTemplate,
   quickReply,
   name: 'line'

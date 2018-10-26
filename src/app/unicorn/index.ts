@@ -2,6 +2,7 @@ import AESCrypto from '../../utils/AESCrypto';
 import Database from './database'
 import MessageFormatter from './messageFormatter'
 import MessagingProvider from '../../messaging/messagingProvider'
+import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from 'constants';
 
 const confirmEmailTemplate = (confirmationUrl) => `<html>
 <head>
@@ -48,8 +49,8 @@ const confirmEmailTemplate = (confirmationUrl) => `<html>
 `
 const sendMailAsync = (mailgun, mailOption) => new Promise((resolve, reject) => {
   // NC:TODO: Remove this when done !!!!
-  resolve('Fake mail sent')
-  return
+  // resolve('Fake mail sent')
+  // return
   mailgun.messages().send(mailOption, (error, body) => {
     console.log(JSON.stringify(error || body))
     if (error) {
@@ -83,7 +84,7 @@ const producerRegister = (messagingProvider, messageFormatter, config) => async 
   const mailOption = {
     from: config.unicornmail,
     to: email,
-    subject: `Confirmation Unicorn Admin Registration`,
+    subject: `Confirmation: Unicorn ${role} registration`,
     html,
   }
 
@@ -98,7 +99,7 @@ const adminRegister = (messagingProvider, messageFormatter, config) => async (em
   const formatter = messageFormatter(requestSource)
   const messagingClient = messagingProvider.get(requestSource)
   const role = 'admin'
-  const source = requestSource
+  const source = requestSource.toLowerCase()
   const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role, source })))
 
   let message = `Hi ${email}, please confirm registration in your email`
@@ -123,30 +124,34 @@ const adminRegister = (messagingProvider, messageFormatter, config) => async (em
     .catch(console.error)
 }
 
-const producerRegistrationConfirm = async (aes, registerationInfo, messagingProvider, messageFormatter, { adminGroup } ) => {
+const producerRegistrationConfirm = async (aes, registerationInfo, messagingProvider, messageFormatter, { adminGroup }) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
-  const adminGroupId = adminGroup[registerationInfo.source.toLowerCase()]
+  const adminGroupId = adminGroup[registerationInfo.source]
 
   console.log(registerationInfo)
   let message = `Thanks for confirming your email, we will let you know when done: ${registerationInfo.role}`
   await messagingClient.sendMessage(registerationInfo.userId, message)
   registerationInfo.confirmed = true
 
-  const encoded = aes.encrypt(Buffer.from(JSON.stringify(registerationInfo)))
-  const approvalUrl = `https://bots.catcat.io/unicorn/fulfillment/approveRegistration?token=${encoded.toString('hex')}`
+  const approvedEncoded = aes.encrypt(Buffer.from(JSON.stringify({ ...registerationInfo, approved: true })))
+  const rejectedEncoded = aes.encrypt(Buffer.from(JSON.stringify({ ...registerationInfo, approved: false })))
+  const domain = 'https://bots.catcat.io'
+  // const domain = 'http://localhost:3000'
+  const approvalUrl = `${domain}/unicorn/fulfillment/approveRegistration?token=${approvedEncoded.toString('hex')}`
+  const rejectedUrl = `${domain}/unicorn/fulfillment/approveRegistration?token=${rejectedEncoded.toString('hex')}`
 
   console.log('approvalUrl', approvalUrl)
+  console.log('rejectedUrl', rejectedUrl)
   const profile = await messagingClient.getProfile(registerationInfo.userId)
-  console.log(profile)
-  console.log(adminGroup, adminGroupId)
-
-  // TODO: format admin message as flex
-  let confirmMessage = `New User Registration: ${profile.displayName} as ${registerationInfo.role}`
-  await messagingClient.sendImage(adminGroupId, profile.pictureUrl, profile.pictureUrl, confirmMessage)
+  // NC:TODO: make a cool headshot image
+  message = formatter.approveRegistrationTemplate(profile.pictureUrl, profile.displayName, registerationInfo.role, registerationInfo.email, approvalUrl, rejectedUrl)
+  // let confirmMessage = `New User Registration: ${profile.displayName} as ${registerationInfo.role}`
+  // await messagingClient.sendImage(adminGroupId, profile.pictureUrl, profile.pictureUrl, confirmMessage)
+  await messagingClient.sendCustomMessages(adminGroupId, message)
 }
 
-const adminRegistrationConfirm =  async (registerationInfo, messagingProvider, messageFormatter) => {
+const adminRegistrationConfirm = async (registerationInfo, messagingProvider, messageFormatter) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
 
@@ -159,7 +164,7 @@ const registerConfirmation = (messagingProvider, messageFormatter, config) => as
   const decoded = aes.decrypt(Buffer.from(params.token, 'hex'))
   const registerationInfo = JSON.parse(decoded.toString())
 
-  switch(registerationInfo.role) {
+  switch (registerationInfo.role) {
     case 'producer':
       return producerRegistrationConfirm(aes, registerationInfo, messagingProvider, messageFormatter, config)
     case 'admin':
@@ -170,15 +175,17 @@ const registerConfirmation = (messagingProvider, messageFormatter, config) => as
 const approveProducerRegistration = async (registerationInfo, messagingProvider, messageFormatter, { adminGroup }) => {
   const formatter = messageFormatter(registerationInfo.source)
   const messagingClient = messagingProvider.get(registerationInfo.source)
-  const adminGroupId = adminGroup[registerationInfo.source.toLowerCase()]
-
-  let message = `Hi ${registerationInfo.email}, welcome to ${registerationInfo.role} mode`
-  await messagingClient.sendMessage(registerationInfo.userId, message)
+  const adminGroupId = adminGroup[registerationInfo.source]
 
   const profile = await messagingClient.getProfile(registerationInfo.userId)
 
-  let confirmMessage = `confirmed: ${profile.displayName} as ${registerationInfo.role}`
-  await messagingClient.sendImage(adminGroupId, profile.pictureUrl, profile.pictureUrl, confirmMessage)
+  let message = registerationInfo.approved
+    ? `Hi ${profile.displayName}, welcome to ${registerationInfo.role} mode`
+    : `Sorry ${profile.displayName}, your registration as ${registerationInfo.role} has been rejected`
+    await messagingClient.sendMessage(registerationInfo.userId, message)
+
+  let approvalResultMessage = `${registerationInfo.approved ? 'APPROVED' : 'REJECTED'}: ${profile.displayName} as ${registerationInfo.role}`
+  await messagingClient.sendMessage(adminGroupId, approvalResultMessage)
 }
 
 const approveRegistration = (messagingProvider, messageFormatter, config) => async (params) => {
@@ -190,7 +197,7 @@ const approveRegistration = (messagingProvider, messageFormatter, config) => asy
     throw new Error('EMAIL_NOT_CONFIRMED')
   }
 
-  switch(registerationInfo.role) {
+  switch (registerationInfo.role) {
     case 'producer':
       return approveProducerRegistration(registerationInfo, messagingProvider, messageFormatter, config)
   }
