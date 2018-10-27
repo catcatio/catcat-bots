@@ -12,33 +12,31 @@ import {
   UpdatedAt,
   DeletedAt,
   Default,
-  AllowNull
+  AllowNull,
+  IsUUID
 } from 'sequelize-typescript'
 
 @Table({
-  tableName: 'producer',
+  tableName: 'registration',
   timestamps: true
 })
-export class Producer extends Model<Producer> {
+export class Registration extends Model<Registration> {
   @PrimaryKey
+  @IsUUID(4)
   @Default(DataType.UUIDV4)
-  @Column(DataType.UUID)
+  @Column
   public id: string
 
-  @Unique
   @Column
-  public email: string
-
-  @AllowNull
-  @Column
-  public displayName: string
-
-  @AllowNull
-  @Column(DataType.TEXT)
-  public displayImageUrl: string
+  public key: string
 
   @Column(DataType.JSON)
-  public providers: any
+  public detail: any
+
+  @AllowNull
+  @Column
+  public approved?: boolean
+
 
   @CreatedAt
   public creationDate: Date

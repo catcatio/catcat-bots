@@ -1,11 +1,12 @@
 import { Sequelize } from 'sequelize-typescript'
-import { Version, schemaVersion } from './models'
+import { Version, Registration, schemaVersion } from './models'
 import versionController from './controllers/version'
+import { Producer } from './models/Producer';
 
 const initDb = async (config) => {
   console.log('initial Sequelize')
   const defaultConfig = {
-    modelPaths: [Version],
+    modelPaths: [Version, Registration, Producer],
     operatorsAliases: Sequelize.Op as any,
     logging: false,
   }
