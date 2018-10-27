@@ -16,7 +16,8 @@ export const handler = (unicorn) => async (agent) => {
 
   const email = parameters['email']
   try {
-    const result = await unicorn.producerRegister(email, { userId, requestSource })
+    const result = await unicorn.producerRegister(email, { userId, requestSource: requestSource })
+    console.log(intentName, result)
     return null
   } catch (err) {
     console.log(intentName, err)

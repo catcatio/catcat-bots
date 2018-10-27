@@ -1,6 +1,11 @@
 export default (unicorn) => {
   return async (req, res) => {
-    unicorn.approveRegistration(req.query)
-    res.redirect('https://catcat.io')
+    try {
+      const result = await unicorn.approveRegistration(req.query)
+      res.send(result)
+    } catch(error) {
+      console.error(error.message)
+      res.status(400).send(typeof error === 'string' ? error : error.message)
+    }
   }
 }

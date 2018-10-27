@@ -3,6 +3,7 @@ import Database from './database'
 import MessageFormatter from './messageFormatter'
 import MessagingProvider from '../../messaging/messagingProvider'
 import registrationController from './controllers/registration'
+import producerController from './controllers/producer'
 
 const confirmEmailTemplate = (confirmationUrl) => `<html>
 <head>
@@ -62,12 +63,24 @@ const sendMailAsync = (mailgun, mailOption) => new Promise((resolve, reject) => 
 })
 
 const producerRegister = (messagingProvider, messageFormatter, config) => async (email, { userId, requestSource }) => {
+  email = email.toLowerCase()
+  const source = requestSource.toLowerCase()
   console.log('register', email)
   const aes = AESCrypto(config.encryptionKey)
-  const formatter = messageFormatter(requestSource)
-  const messagingClient = messagingProvider.get(requestSource)
+  const formatter = messageFormatter(source)
+  const messagingClient = messagingProvider.get(source)
   const role = 'producer'
-  const source = requestSource
+
+
+  const producer = await producerController.getByEmail(email)
+
+  if (producer) {
+    const errorMsg = `Hi ${producer.displayName}, you are already be a producer`
+    console.log(errorMsg)
+    await messagingClient.sendMessage(userId, errorMsg)
+    return Promise.reject('REGISTER_ALREADY_ENROLLED')
+  }
+
   const profile = await messagingClient.getProfile(userId)
   const registratonDetail = { userId, email, role, source, ...profile }
 
@@ -100,11 +113,11 @@ const producerRegister = (messagingProvider, messageFormatter, config) => async 
 
 const adminRegister = (messagingProvider, messageFormatter, config) => async (email, { userId, requestSource }) => {
   console.log('register', email)
-  const aes = AESCrypto(config.encryptionKey)
-  const formatter = messageFormatter(requestSource)
-  const messagingClient = messagingProvider.get(requestSource)
-  const role = 'admin'
   const source = requestSource.toLowerCase()
+  const aes = AESCrypto(config.encryptionKey)
+  const formatter = messageFormatter(source)
+  const messagingClient = messagingProvider.get(source)
+  const role = 'admin'
   const encoded = aes.encrypt(Buffer.from(JSON.stringify({ userId, email, role, source })))
 
   let message = `Hi ${email}, please confirm registration in your email`
@@ -139,7 +152,7 @@ const producerRegistrationConfirm = async (aes, registration, messagingProvider,
     const confirmedMessage = `Your registration has already been processed: ${registration.id}`
     console.log(confirmedMessage)
     await messagingClient.sendMessage(registration.detail.userId, confirmedMessage)
-    return
+    return Promise.reject('REGISTER_ALREADY_PROCESSED')
   }
 
   const registerationInfo = registration.detail
@@ -183,13 +196,13 @@ const registerConfirmation = (messagingProvider, messageFormatter, config) => as
   const registration = await registrationController.getById(decryptedInfo.id)
 
   if (!registration) {
-    console.error(`REGISTRATION_NOT_FOUND, ${decryptedInfo.id}`)
-    return
+    console.error(`REGISTER_NOT_FOUND, ${decryptedInfo.id}`)
+    return Promise.reject('REGISTER_NOT_FOUND')
   }
 
   if (registration.approved != null) {
-    console.log(`this registration has been processed, ${decryptedInfo.id}`)
-    return
+    console.log('REGISTER_NOT_FOUND',`this registration has been processed, ${decryptedInfo.id}`)
+    return Promise.reject('REGISTER_ALREADY_PROCESSED')
   }
 
   switch (registration.detail.role) {
@@ -212,7 +225,7 @@ const approveProducerRegistration = async (registration, approved, messagingProv
     const confirmedMessage = `This registration has already been processed: ${registration.id}`
     console.log(confirmedMessage)
     await messagingClient.sendMessage(adminGroupId, confirmedMessage)
-    return
+    return Promise.reject('REGISTER_ALREADY_PROCESSED')
   }
 
   registrationController.setApprovalResult(registration.id, approved)
@@ -224,6 +237,19 @@ const approveProducerRegistration = async (registration, approved, messagingProv
 
   let approvalResultMessage = `${approved ? 'APPROVED' : 'REJECTED'}: ${registerationInfo.displayName} as ${registerationInfo.role}`
   await messagingClient.sendMessage(adminGroupId, approvalResultMessage)
+
+  if (approved) {
+    producerController.newProducer(
+      registerationInfo.email,
+      registerationInfo.displayName,
+      registerationInfo.pictureUrl,
+      {
+        [registerationInfo.source]: registerationInfo.userId
+      }
+    )
+  }
+
+  return approved ? 'APPROVED' : 'REJECTED'
 }
 
 const approveRegistration = (messagingProvider, messageFormatter, config) => async (params) => {
@@ -233,8 +259,8 @@ const approveRegistration = (messagingProvider, messageFormatter, config) => asy
 
   const registration = await registrationController.getById(registerationInfo.id)
   if (!registration) {
-    console.error(`REGISTRATION_NOT_FOUND, ${registerationInfo.id}`)
-    return
+    console.error(`REGISTER_NOT_FOUND, ${registerationInfo.id}`)
+    return Promise.reject('REGISTER_NOT_FOUND')
   }
 
   switch (registration.detail.role) {

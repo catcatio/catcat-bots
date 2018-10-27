@@ -4,15 +4,21 @@ const getById = async (id) => {
   return Producer.findById(id)
 }
 
-const newProducer = async (email: string, displayName: string, displayImageUrl: string, providers: any) => {
+const getByEmail = async (email) => {
+  return Producer.findOne({ where: { email } })
+}
+
+const newProducer = async (email: string, displayName: string, pictureUrl: string, providers: any) => {
   return Producer.create<Producer>({
     email,
     displayName,
-    displayImageUrl
+    pictureUrl,
+    providers
   })
 }
 
 export default {
   getById,
   newProducer,
+  getByEmail
 }

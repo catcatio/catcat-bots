@@ -1,4 +1,5 @@
 import { Registration } from '../models'
+import { IsEmail } from 'sequelize-typescript';
 
 const getById = async (id) => {
   return Registration.findById(id)

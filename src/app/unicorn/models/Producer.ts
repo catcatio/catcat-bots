@@ -12,12 +12,19 @@ import {
   UpdatedAt,
   DeletedAt,
   Default,
-  AllowNull
+  AllowNull,
+  IsEmail
 } from 'sequelize-typescript'
 
 @Table({
   tableName: 'producer',
-  timestamps: true
+  timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    },
+  ]
 })
 export class Producer extends Model<Producer> {
   @PrimaryKey
@@ -26,6 +33,7 @@ export class Producer extends Model<Producer> {
   public id: string
 
   @Unique
+  @IsEmail
   @Column
   public email: string
 
@@ -35,7 +43,7 @@ export class Producer extends Model<Producer> {
 
   @AllowNull
   @Column(DataType.TEXT)
-  public displayImageUrl: string
+  public pictureUrl: string
 
   @Column(DataType.JSON)
   public providers: any

@@ -10,16 +10,31 @@ const start = async () => {
   const unicorn = Unicorn(config.unicorn)
   unicorn.database.initDb()
 
-  const tokenProducer = await unicorn.producerRegister(email, { userId, requestSource })
+  // const tokenProducer = await unicorn.producerRegister(email, { userId, requestSource })
+  //   .catch(error => console.error(error))
 
-  const x: any = await unicorn.registerConfirmation({ token: tokenProducer })
+  // const x: any = await unicorn.registerConfirmation({ token: tokenProducer })
+  //   .catch(error => console.error(error))
 
-  // await unicorn.adminRegister(email, { userId, requestSource })
+  // // await unicorn.adminRegister(email, { userId, requestSource })
+  // // await unicorn.registerConfirmation({ token: tokenAdmin  })
 
-  // await unicorn.registerConfirmation({ token: tokenAdmin  })
+  // await unicorn.approveRegistration({ token: x.approvedToken })
+  //   .catch(error => console.error(error))
+  // await unicorn.approveRegistration({ token: x.rejectedToken })
+  //   .catch(error => console.error(error))
 
-  await unicorn.approveRegistration({ token: x.approvedToken })
-  await unicorn.approveRegistration({ token: x.rejectedToken })
+
+
+
+  // const tokenProducer2 = await unicorn.producerRegister(email, { userId, requestSource })
+  //   .catch(error => console.error(error))
+
+  // const x2: any = await unicorn.registerConfirmation({ token: tokenProducer2 })
+  //   .catch(error => console.error(error))
+
+  // // await unicorn.adminRegister(email, { userId, requestSource })
+  // // await unicorn.registerConfirmation({ token: tokenAdmin  })
 
 }
 
